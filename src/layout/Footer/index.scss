@@ -1,0 +1,21 @@
+.container {
+  footer {
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    span {
+      color: var(--accentColor);
+      font-size: 20px;
+    }
+    .copyright-token {
+      color: var(--primaryColor);
+    }
+    .underline {
+      text-decoration: underline;
+    }
+    .footer-logo {
+      margin-left: 1.5rem;
+    }
+  }
+}

@@ -1,0 +1,50 @@
+.header {
+  position: fixed;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  transition: background-color 1s ease;
+  .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .left-div {
+    }
+    .right-div {
+      display: flex;
+      align-items: center;
+      .uniswap-logo {
+        margin-right: 3rem;
+        transition: transform 0.3s ease, -webkit-transform 0.3s ease;
+        &:hover {
+          outline: none;
+          transform: scale(1.1);
+        }
+      }
+      .wallet-container {
+        background: transparent;
+        border: 0px;
+        display: flex;
+        align-items: center;
+        transition: transform 0.3s ease, -webkit-transform 0.3s ease;
+        cursor: pointer;
+        &:hover {
+          outline: none;
+          transform: scale(1.1);
+        }
+        .wallet-logo {
+          margin-right: 0.5rem;
+          fill: var(--accentColor);
+        }
+        span {
+          color: var(--accentColor);
+          justify-content: center;
+          font-weight: 500;
+          font-size: 25px;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,119 @@
+.container.main {
+  margin-top: 13.5rem;
+  .lp-interface {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    margin: 0 14rem;
+
+    .main-header {
+      width: 100%;
+      justify-content: center;
+      background: var(--bgSecondary);
+      display: flex;
+      align-items: center;
+      color: var(--accentColor);
+      border-radius: 0.5rem;
+      padding: 0.6rem;
+      font-size: 34px;
+      font-weight: bold;
+      svg {
+        margin-right: 1rem;
+      }
+    }
+    .info-panel {
+      grid-gap: 1rem;
+      margin-top: 1rem;
+      display: grid;
+      grid-template-columns: 75% 25%;
+      .conversion-container {
+        background-color: var(--bgPrimary);
+        border-radius: 1rem;
+        padding: 5rem 6rem;
+        display: grid;
+        grid-template-columns: 1fr max-content 1fr;
+        grid-gap: 1rem;
+        justify-content: center;
+        align-items: center;
+        .first-token {
+          display: flex;
+          flex-direction: column;
+          text-align: right;
+        }
+        .second-token {
+          display: flex;
+          flex-direction: column;
+        }
+      }
+      .price-feed-container {
+        background-color: #3a1451;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        text-align: left;
+        padding: 2.5rem;
+        border-radius: 1rem;
+        font-size: 16px;
+        font-weight: bold;
+        .token-data {
+          display: flex;
+          flex-direction: column;
+          span:nth-child(1) {
+            padding-bottom: 5px;
+            color: #d8d8d8;
+          }
+          span:nth-child(2) {
+            color: #cc3180;
+          }
+        }
+        .token-data:not(:last-child) {
+          padding-bottom: 15px;
+        }
+      }
+    }
+    a {
+      text-decoration: none;
+      .add-liquidity-button {
+        margin-top: 1rem;
+        width: 101.5%;
+        height: 3rem;
+        border-radius: 3ch;
+        background: var(--bgSecondary);
+        justify-content: center;
+        align-items: center;
+        display: flex;
+        border: 0;
+        cursor: pointer;
+        span {
+          color: var(--accentColor);
+          font-size: 20px;
+          font-weight: bold;
+          padding-left: 1rem;
+        }
+      }
+    }
+  }
+}
+
+.token {
+  border-bottom: 2px solid #42266a;
+  justify-content: right;
+  width: 100%;
+  padding-bottom: 1rem;
+  margin: 0;
+  color: var(--accentColor);
+  font-size: 34px;
+  font-weight: bold;
+}
+.token-per-token {
+  margin-top: 1.5rem;
+  font-size: 16px;
+  color: #d2c7de;
+}
+
+.conversion-number {
+  font-size: 16px;
+  margin-top: 0.3rem;
+  color: #cc3180;
+  font-weight: bold;
+}
