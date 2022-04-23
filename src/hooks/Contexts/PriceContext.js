@@ -1,42 +1,32 @@
 import React, { useContext, useState, useEffect, useCallback } from "react";
 import { fetchPairPrice } from "../../utils/utils";
+import { useWeb3React } from "@web3-react/core";
 
 const PriceContext = React.createContext();
-const PriceUpdateContext = React.createContext();
 
 export function usePrice() {
   return useContext(PriceContext);
 }
 
-export function usePriceUpdate() {
-  return useContext(PriceUpdateContext);
-}
-
 const PriceProvider = ({ children }) => {
+  const { library } = useWeb3React();
+
   const [price, setPrice] = useState({
-    ethPerIXSPrice: "0.00000",
-    ixsPerETHPrice: "0.00000",
+    ethPerIXSPrice: "0",
+    ixsPerETHPrice: "0",
   });
 
-  const priceUpdate = (obj) => {
-    setPrice(obj);
-  };
-
   const getPairPrice = useCallback(async () => {
-    var pairPrice = await fetchPairPrice();
+    let pairPrice = await fetchPairPrice(library);
     setPrice(pairPrice);
-  }, []);
+  }, [library]);
 
   useEffect(() => {
-    getPairPrice();
-  }, [getPairPrice]);
+    getPairPrice(library);
+  }, [library, getPairPrice]);
 
   return (
-    <PriceContext.Provider value={price}>
-      <PriceUpdateContext.Provider value={priceUpdate}>
-        {children}
-      </PriceUpdateContext.Provider>
-    </PriceContext.Provider>
+    <PriceContext.Provider value={price}>{children}</PriceContext.Provider>
   );
 };
 

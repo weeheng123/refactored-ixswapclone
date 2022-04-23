@@ -1,37 +1,20 @@
+import { parseEther } from "ethers/lib/utils";
 import React, { useContext, useEffect, useState, useCallback } from "react";
 import { getTokenBalance } from "../../utils/utils";
 
 const BalanceContext = React.createContext();
-const BalanceUpdateContext = React.createContext();
 
 export function useBalance() {
   return useContext(BalanceContext);
 }
 
-export function useBalanceUpdate() {
-  return useContext(BalanceUpdateContext);
-}
-
 const BalanceProvider = ({ children }) => {
   const [balance, setBalance] = useState({
-    ethTokenBalance: "0.00000",
-    ixsTokenBalance: "0.00000",
+    ethTokenBalance: parseEther("0"),
+    ixsTokenBalance: parseEther("0"),
   });
 
-  const balanceUpdate = (obj) => {
-    setBalance(obj);
-  };
-
-  const fetchTokenBalance = useCallback(async () => {
-    try {
-      var tokenBalance = await getTokenBalance();
-      setBalance(tokenBalance);
-    } catch (error) {
-      switchNetwork();
-    }
-  }, []);
-
-  const switchNetwork = async () => {
+  const switchNetwork = useCallback(async () => {
     const chainId = 1;
 
     if (window.ethereum.networkVersion !== chainId) {
@@ -44,18 +27,25 @@ const BalanceProvider = ({ children }) => {
         alert("IXSwap only works on mainnet");
       }
     }
-  };
+  }, []);
+
+  const fetchTokenBalance = useCallback(async () => {
+    try {
+      let tokenBalance = await getTokenBalance();
+      setBalance(tokenBalance);
+    } catch (error) {
+      switchNetwork();
+    }
+  }, [switchNetwork]);
 
   useEffect(() => {
     switchNetwork();
     fetchTokenBalance();
-  }, [fetchTokenBalance]);
+  }, [switchNetwork, fetchTokenBalance]);
 
   return (
     <BalanceContext.Provider value={balance}>
-      <BalanceUpdateContext.Provider value={balanceUpdate}>
-        {children}
-      </BalanceUpdateContext.Provider>
+      {children}
     </BalanceContext.Provider>
   );
 };

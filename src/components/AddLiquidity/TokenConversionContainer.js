@@ -5,6 +5,7 @@ const TokenConversionContainer = ({
   token,
   balance,
   value,
+  name,
   onChange,
   onClick,
 }) => {
@@ -20,6 +21,7 @@ const TokenConversionContainer = ({
         value={value}
         onChange={onChange}
         onClick={onClick}
+        name={name}
       />
     </div>
   );

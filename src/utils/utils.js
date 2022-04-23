@@ -1,6 +1,7 @@
 import { ethers } from "ethers";
 import IXSTokenABI from "../config/abi/IXSTokenABI.json";
 import UniV2RouterABI from "../config/abi/UniswapV2RouterABI.json";
+import { parseFixed } from "@ethersproject/bignumber";
 
 export const ixsAddress = "0x73d7c860998ca3c01ce8c808f5577d94d545d1b4";
 export const wethAddress = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2";
@@ -13,7 +14,7 @@ export const provider = new ethers.providers.Web3Provider(window.ethereum);
 
 export const truncateAddress = (address) => {
   if (!address) return "No Account";
-  var tempAddress;
+  let tempAddress;
   if (address) {
     if (address.length > 20) {
       tempAddress =
@@ -35,17 +36,30 @@ export const getTokenBalance = async () => {
     );
     const signer = await provider.getSigner();
     const signerAddress = await signer.getAddress();
-    var ixsBalance = await ixsTokenContract.balanceOf(signerAddress);
-    var ethBalance = await provider.getBalance(signerAddress);
-    ethBalance = ethers.utils.formatEther(ethBalance);
-    ixsBalance = ethers.utils.formatEther(ixsBalance);
+    let ixsBalance = await ixsTokenContract.balanceOf(signerAddress);
+    let ethBalance = await provider.getBalance(signerAddress);
     return { ethTokenBalance: ethBalance, ixsTokenBalance: ixsBalance };
   } catch (error) {
     console.log(error);
   }
 };
 
-export const fetchPairPrice = async () => {
+export const toBigNumber = (value, decimalPlaces) => {
+  if (!value.includes(".")) {
+    return parseFixed(value, decimalPlaces);
+  }
+
+  const parts = value.split(".");
+  const fraction = parts[1].slice(0, decimalPlaces);
+
+  return parseFixed(`${parts[0]}.${fraction}`, decimalPlaces);
+};
+
+export const fetchPairPrice = async (library) => {
+  let provider = api;
+  if (library) {
+    provider = library;
+  }
   const contract = new ethers.Contract(
     pairAddress,
     [
@@ -53,13 +67,13 @@ export const fetchPairPrice = async () => {
       "function token0() external view returns (address)",
       "function token1() external view returns (address)",
     ],
-    api
+    provider
   );
   const reserves = await contract.getReserves();
 
   return {
-    ethPerIXSPrice: (reserves.reserve1 / reserves.reserve0).toPrecision(6),
-    ixsPerETHPrice: (reserves.reserve0 / reserves.reserve1).toPrecision(6),
+    ethPerIXSPrice: reserves.reserve1.mul(10 ** 15).div(reserves.reserve0),
+    ixsPerETHPrice: reserves.reserve0.mul(10 ** 15).div(reserves.reserve1),
   };
 };
 
@@ -76,18 +90,18 @@ export const addLiquidity = async (ethAmount, ixsAmount) => {
       signer
     );
 
-    var ethSlippage = ethAmount * 0.95;
-    var ixsSlippage = ixsAmount * 0.95;
+    let ethSlippage = ethAmount.mul(0.95);
+    let ixsSlippage = ixsAmount.mul(0.95);
 
     const offChainTXPrediction =
       await routerContract.callStatic.addLiquidityETH(
         ixsAddress,
-        ethers.utils.parseEther(ixsAmount),
-        ethers.utils.parseEther(ixsSlippage),
-        ethers.utils.parseEther(ethSlippage),
+        ixsAmount,
+        ixsSlippage,
+        ethSlippage,
         signerAddress,
         Date.now() + 20 * 60000,
-        { value: ethers.utils.parseEther(ethAmount) }
+        { value: ethAmount }
       );
 
     alert(

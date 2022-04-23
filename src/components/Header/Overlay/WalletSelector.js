@@ -1,13 +1,13 @@
 import MetamaskLogo from "../../../assets/Header/Overlay/MetamaskLogo";
 import WCLogo from "../../../assets/Header/Overlay/WCLogo";
 import ConnectionButton from "../Button/ConnectionButton";
-import { useOverlayUpdate } from "../../../hooks/Contexts/OverlayContext";
+import { useShowOverlay } from "../../../hooks/Contexts/OverlayContext";
 import { useWeb3React } from "@web3-react/core";
 import { connectors } from "../../../config/connectors/connectors";
 import TitleHeader from "../../Common/TitleHeader";
 
 const WalletSelector = ({ className }) => {
-  const toggleShowOverlay = useOverlayUpdate();
+  const [, toggleShowOverlay] = useShowOverlay();
   const { activate, deactivate, active } = useWeb3React();
   const setProvider = (type) => {
     window.localStorage.setItem("provider", type);

@@ -1,8 +1,20 @@
-const TokenConversionInput = ({ className, value, onChange, onClick }) => {
+const TokenConversionInput = ({
+  className,
+  value,
+  name,
+  onChange,
+  onClick,
+}) => {
   return (
     <div className={className}>
-      <input type="tel" placeholder="0.0" value={value} onChange={onChange} />
-      <button onClick={onClick}>
+      <input
+        type="number"
+        placeholder="0.0"
+        value={value}
+        name={name}
+        onChange={onChange}
+      />
+      <button name={name} onClick={onClick}>
         <span>max</span>
       </button>
     </div>

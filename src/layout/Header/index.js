@@ -3,11 +3,11 @@ import Brand from "../../components/Header/Brand";
 import IXSwapLogo from "../../assets/Header/IXSwapLogo";
 import UniswapLink from "../../components/Header/UniswapLink";
 import WalletConnectButton from "../../components/Header/WalletConnectButton";
-import { useOverlayUpdate } from "../../hooks/Contexts/OverlayContext";
+import { useShowOverlay } from "../../hooks/Contexts/OverlayContext";
 import { useWeb3React } from "@web3-react/core";
 
 const Header = () => {
-  const toggleShowOverlay = useOverlayUpdate();
+  const [, toggleShowOverlay] = useShowOverlay();
   const { account } = useWeb3React();
   return (
     <header className="header">
