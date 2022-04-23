@@ -26,7 +26,12 @@ const AddLiquidity = () => {
     const name = event.target.name;
     if (name === "ETH") {
       event.preventDefault();
+      if (!event.target.value) {
+        setInputState(false);
+      }
       setTokenAmounts({
+        ethDisplay: event.target.value,
+        ixsDisplay: (event.target.value * tokenPrice.ixsPerETHPrice) / 10 ** 15,
         ethAmount: parseEther(event.target.value),
         ixsAmount: parseEther(event.target.value)
           .mul(tokenPrice.ixsPerETHPrice)
@@ -34,7 +39,12 @@ const AddLiquidity = () => {
       });
     } else {
       event.preventDefault();
+      if (!event.target.value) {
+        setInputState(false);
+      }
       setTokenAmounts({
+        ethDisplay: (event.target.value * tokenPrice.ethPerIXSPrice) / 10 ** 15,
+        ixsDisplay: event.target.value,
         ethAmount: parseEther(event.target.value)
           .mul(tokenPrice.ethPerIXSPrice)
           .div(10 ** 15),
@@ -118,7 +128,7 @@ const AddLiquidity = () => {
             className="conversion-container"
             token="ETH"
             balance={formatEther(tokenBalance.ethTokenBalance)}
-            value={inputState ? formatEther(tokenAmounts.ethAmount) : ""}
+            value={inputState ? tokenAmounts.ethDisplay : ""}
             name="ETH"
             onChange={(e) => onValueChange(e)}
             onClick={() => maxAmount("ETH")}
@@ -127,7 +137,7 @@ const AddLiquidity = () => {
             className="conversion-container"
             token="IXS"
             balance={formatEther(tokenBalance.ixsTokenBalance)}
-            value={inputState ? formatEther(tokenAmounts.ixsAmount) : ""}
+            value={inputState ? tokenAmounts.ixsDisplay : ""}
             name="IXS"
             onChange={(e) => onValueChange(e)}
             onClick={() => maxAmount("IXS")}
