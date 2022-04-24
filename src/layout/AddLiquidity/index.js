@@ -23,7 +23,7 @@ const AddLiquidity = () => {
   const { active } = useWeb3React();
 
   const onValueChange = (event) => {
-    const name = event.target.name;
+    const { name } = event.target;
     if (name === "ETH") {
       event.preventDefault();
       if (!event.target.value) {
