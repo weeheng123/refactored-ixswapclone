@@ -23,32 +23,32 @@ const AddLiquidity = () => {
   const { active } = useWeb3React();
 
   const onValueChange = (event) => {
-    const { name } = event.target;
+    const { name, value } = event.target;
     if (name === "ETH") {
       event.preventDefault();
       if (!event.target.value) {
         setInputState(false);
       }
       setTokenAmounts({
-        ethDisplay: event.target.value,
-        ixsDisplay: (event.target.value * tokenPrice.ixsPerETHPrice) / 10 ** 15,
-        ethAmount: parseEther(event.target.value),
-        ixsAmount: parseEther(event.target.value)
+        ethDisplay: value,
+        ixsDisplay: (value * tokenPrice.ixsPerETHPrice) / 10 ** 15,
+        ethAmount: parseEther(value),
+        ixsAmount: parseEther(value)
           .mul(tokenPrice.ixsPerETHPrice)
           .div(10 ** 15),
       });
     } else {
       event.preventDefault();
-      if (!event.target.value) {
+      if (!value) {
         setInputState(false);
       }
       setTokenAmounts({
-        ethDisplay: (event.target.value * tokenPrice.ethPerIXSPrice) / 10 ** 15,
-        ixsDisplay: event.target.value,
-        ethAmount: parseEther(event.target.value)
+        ethDisplay: (value * tokenPrice.ethPerIXSPrice) / 10 ** 15,
+        ixsDisplay: value,
+        ethAmount: parseEther(value)
           .mul(tokenPrice.ethPerIXSPrice)
           .div(10 ** 15),
-        ixsAmount: parseEther(event.target.value),
+        ixsAmount: parseEther(value),
       });
     }
   };
