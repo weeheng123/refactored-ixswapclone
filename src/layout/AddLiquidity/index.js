@@ -26,7 +26,7 @@ const AddLiquidity = () => {
     const { name, value } = event.target;
     if (name === "ETH") {
       event.preventDefault();
-      if (!event.target.value) {
+      if (!value) {
         setInputState(false);
       }
       setTokenAmounts({
