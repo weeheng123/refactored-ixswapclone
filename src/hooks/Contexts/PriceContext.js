@@ -17,13 +17,13 @@ const PriceProvider = ({ children }) => {
   });
 
   const getPairPrice = useCallback(async () => {
-    let pairPrice = await fetchPairPrice(library);
+    const pairPrice = await fetchPairPrice(library);
     setPrice(pairPrice);
   }, [library]);
 
   useEffect(() => {
-    getPairPrice(library);
-  }, [library, getPairPrice]);
+    getPairPrice();
+  }, [getPairPrice]);
 
   return (
     <PriceContext.Provider value={price}>{children}</PriceContext.Provider>

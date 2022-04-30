@@ -7,48 +7,50 @@ import { useBalance } from "../../hooks/Contexts/BalanceContext";
 import { usePrice } from "../../hooks/Contexts/PriceContext";
 import { useState, useEffect } from "react";
 import { useWeb3React } from "@web3-react/core";
-import { addLiquidity } from "../../utils/utils";
+import { addLiquidity, preventOverflow } from "../../utils/utils";
 import { parseEther, formatEther, formatUnits } from "ethers/lib/utils";
 
 const AddLiquidity = () => {
   const tokenBalance = useBalance();
   const tokenPrice = usePrice();
   const [tokenAmounts, setTokenAmounts] = useState({
-    ethAmount: parseEther("0"),
-    ixsAmount: parseEther("0"),
+    ethAmount: "",
+    ixsAmount: "",
   });
   const [buttonState, setButtonState] = useState();
-  const [inputState, setInputState] = useState(false);
   const [allowAddLiquidity, setAllowAddLiquidity] = useState(false);
   const { active } = useWeb3React();
 
-  const onValueChange = (event) => {
+  const handleValueChange = (event) => {
     const { name, value } = event.target;
+
+    if (value === "") {
+      setTokenAmounts({
+        ethAmount: "",
+        ixsAmount: "",
+      });
+      return;
+    }
+
     if (name === "ETH") {
       event.preventDefault();
-      if (!value) {
-        setInputState(false);
-      }
       setTokenAmounts({
-        ethDisplay: value,
-        ixsDisplay: (value * tokenPrice.ixsPerETHPrice) / 10 ** 15,
-        ethAmount: parseEther(value),
-        ixsAmount: parseEther(value)
-          .mul(tokenPrice.ixsPerETHPrice)
-          .div(10 ** 15),
+        ethAmount: preventOverflow(value),
+        ixsAmount: formatEther(
+          parseEther(value)
+            .mul(tokenPrice.ixsPerETHPrice)
+            .div(10 ** 15)
+        ),
       });
     } else {
       event.preventDefault();
-      if (!value) {
-        setInputState(false);
-      }
       setTokenAmounts({
-        ethDisplay: (value * tokenPrice.ethPerIXSPrice) / 10 ** 15,
-        ixsDisplay: value,
-        ethAmount: parseEther(value)
-          .mul(tokenPrice.ethPerIXSPrice)
-          .div(10 ** 15),
-        ixsAmount: parseEther(value),
+        ethAmount: formatEther(
+          parseEther(value)
+            .mul(tokenPrice.ethPerIXSPrice)
+            .div(10 ** 15)
+        ),
+        ixsAmount: preventOverflow(value),
       });
     }
   };
@@ -67,21 +69,14 @@ const AddLiquidity = () => {
     if (token === "IXS") {
       if (!tokenBalance.ixsTokenBalance.isZero()) {
         setTokenAmounts({
-          ethAmount: tokenBalance.ixsTokenBalance,
-          ixsAmount: tokenBalance.ixsTokenBalance
+          ethAmount: tokenBalance.ixsTokenBalance
             .mul(tokenPrice.ethPerIXSPrice)
             .div(10 ** 15),
+          ixsAmount: tokenBalance.ixsTokenBalance,
         });
       }
     }
   };
-  useEffect(() => {
-    if (tokenAmounts.ethAmount.isZero()) {
-      setInputState(false);
-    } else {
-      setInputState(true);
-    }
-  }, [tokenAmounts.ethAmount]);
 
   useEffect(() => {
     const buttonTextChecker = () => {
@@ -128,18 +123,18 @@ const AddLiquidity = () => {
             className="conversion-container"
             token="ETH"
             balance={formatEther(tokenBalance.ethTokenBalance)}
-            value={inputState ? tokenAmounts.ethDisplay : ""}
+            value={tokenAmounts.ethAmount}
             name="ETH"
-            onChange={(e) => onValueChange(e)}
+            onChange={handleValueChange}
             onClick={() => maxAmount("ETH")}
           />
           <TokenConversionContainer
             className="conversion-container"
             token="IXS"
             balance={formatEther(tokenBalance.ixsTokenBalance)}
-            value={inputState ? tokenAmounts.ixsDisplay : ""}
+            value={tokenAmounts.ixsAmount}
             name="IXS"
-            onChange={(e) => onValueChange(e)}
+            onChange={handleValueChange}
             onClick={() => maxAmount("IXS")}
           />
         </div>
@@ -169,9 +164,7 @@ const AddLiquidity = () => {
         </div>
         <div className="liquidity-button-container">
           <button
-            onClick={() =>
-              addLiquidity(tokenAmounts.ethAmount, tokenAmounts.ixsAmount)
-            }
+            onClick={() => addLiquidity(tokenAmounts)}
             disabled={allowAddLiquidity}
           >
             {buttonState}

@@ -1,5 +1,5 @@
-const Copyright = ({ className, year, token }) => (
-  <div className={className}>
+const Copyright = ({ year, token }) => (
+  <div className="ixs-copyright">
     <span>
       © {year} <span className="copyright-token">{token}</span>. All rights
       reserved.

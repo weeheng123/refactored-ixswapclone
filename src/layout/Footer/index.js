@@ -4,8 +4,8 @@ import Links from "../../components/Footer/Links";
 
 const Footer = () => (
   <div className="container">
-    <footer className="footer">
-      <Copyright className="ixs-copyright" year="2020-2021" token="IXSwap" />
+    <footer>
+      <Copyright year="2020-2021" token="IXSwap" />
       <Links />
     </footer>
   </div>

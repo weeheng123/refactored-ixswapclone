@@ -2,6 +2,7 @@ import { ethers } from "ethers";
 import IXSTokenABI from "../config/abi/IXSTokenABI.json";
 import UniV2RouterABI from "../config/abi/UniswapV2RouterABI.json";
 import { parseFixed } from "@ethersproject/bignumber";
+import { parseEther } from "ethers/lib/utils";
 
 export const ixsAddress = "0x73d7c860998ca3c01ce8c808f5577d94d545d1b4";
 export const wethAddress = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2";
@@ -77,8 +78,9 @@ export const fetchPairPrice = async (library) => {
   };
 };
 
-export const addLiquidity = async (ethAmount, ixsAmount) => {
+export const addLiquidity = async (tokenAmount) => {
   try {
+    const { ethAmount, ixsAmount } = tokenAmount;
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     await provider.send("eth_requestAccounts", []);
     const signer = await provider.getSigner();
@@ -90,18 +92,21 @@ export const addLiquidity = async (ethAmount, ixsAmount) => {
       signer
     );
 
-    let ethSlippage = ethAmount.mul(0.95);
-    let ixsSlippage = ixsAmount.mul(0.95);
+    const ethSlippage = parseEther(String(ethAmount * 0.95));
+    const ixsSlippage = parseEther(String(ixsAmount * 0.95));
+
+    const parsedETHAmount = parseEther(ethAmount);
+    const parsedIXSAmount = parseEther(ixsAmount);
 
     const offChainTXPrediction =
       await routerContract.callStatic.addLiquidityETH(
         ixsAddress,
-        ixsAmount,
+        parsedIXSAmount,
         ixsSlippage,
         ethSlippage,
         signerAddress,
         Date.now() + 20 * 60000,
-        { value: ethAmount }
+        { value: parsedETHAmount }
       );
 
     alert(
@@ -111,12 +116,12 @@ export const addLiquidity = async (ethAmount, ixsAmount) => {
 
     await routerContract.addLiquidityETH(
       ixsAddress,
-      ethers.utils.parseEther(ixsAmount),
-      ethers.utils.parseEther(ixsSlippage),
-      ethers.utils.parseEther(ethSlippage),
+      parsedIXSAmount,
+      ixsSlippage,
+      ethSlippage,
       signerAddress,
       Date.now() + 20 * 60000,
-      { value: ethers.utils.parseEther(ethAmount) }
+      { value: parsedETHAmount }
     );
   } catch (error) {
     const errorObj = error;
@@ -124,3 +129,21 @@ export const addLiquidity = async (ethAmount, ixsAmount) => {
     console.log(error);
   }
 };
+
+export const preventOverflow = (value, decimalPlaces) => {
+  if (!value.includes(".")) return value;
+
+  const parts = value.split(".");
+  const fraction = parts[1].slice(0, decimalPlaces);
+
+  return `${parts[0]}.${fraction}`;
+};
+
+// export const handleChange = (e) => {
+//   const { name, value } = e.target;
+
+//   setDepositAddresses((prev) => ({
+//     ...prev,
+//     [name]: preventOverflow(value, selectedSpool?.asset.decimals),
+//   }));
+// };
